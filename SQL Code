@@ -1,0 +1,78 @@
+select count(bank_preference) as goverment from respondent where bank_preference = 'Government' (24)
+select count(bank_preference) as goverment from respondent where bank_preference = 'Private' (12)
+
+
+-- HOW MANY RESPONDENTS HAVE A BANK ACCOUNT
+select COUNT(gender)FROM respondent WHERE fi_account LIKE 'C%' (30 Respondents have a bank account )
+select COUNT(gender) , gender FROM respondent WHERE fi_account LIKE 'C%' group by gender (9 Female and 21 Female)
+select COUNT(gender) , gender, sector FROM respondent WHERE fi_account LIKE 'C%' group by gender, sector (sector and gender wise seggregation)
+
+-- HOW MANY RESPONDENTS HAVE A ACCOUNT IN POST OFFICE AND HOW MANY ARE AWARE OF POST OFFICE BANKS
+select COUNT(gender), gender from respondent WHERE fi_account LIKE '%Post office Saving Banks%' GROUP BY gender (total 5 2F&3M)
+SELECT count(gender), gender FROM respondent WHERE fi_awareness LIKE '%Post office Saving Banks%' GROUP BY gender (total 28 10F&18M)
+
+-- Which Bank account the respondent have a bank account in and their preference between government and Private
+SELECT 	bank, bank_preference, COUNT(gender) AS count FROM respondent WHERE bank_preference = 'Government' GROUP BY bank, bank_preference
+SELECT 	bank, bank_preference, COUNT(gender) AS count FROM respondent WHERE bank_preference = 'Private' GROUP BY bank, bank_preference
+
+-- How many respondents have a bank account even though they had LESS THAT 12 years of schooling
+SELECT COUNT(gender), gender FROM respondent WHERE fi_account LIKE 'C%' AND educational_background IN ('12','10','5','3','9','8','No Schooling')GROUP BY gender
+SELECT COUNT(gender), gender FROM respondent WHERE fi_account LIKE 'C%' AND educational_background IN ('Post Graduate', 'Graduate','Diploma') GROUP BY GENDER
+
+-- How many respondents have a saving account , FD, RD 
+SELECT count(gender) as Saving_Account, gender FROM respondent WHERE account_type LIKE 'B%' GROUP BY gender
+SELECT count(gender) as FD_ACCOUNT, gender FROM respondent WHERE account_type LIKE '%Fixed/Term Deposit Account%' GROUP BY gender
+SELECT count(gender) as RD_ACCOUNT, gender FROM respondent WHERE account_type LIKE '%Recurring Deposit Account%' GROUP BY gender
+
+-- How many individuals have a bank account and still recieve salary in hand 
+SELECT COUNT(*) AS respondents, gender, source_of_salary FROM respondent WHERE source_of_salary = 'In-hand Cash' AND account_type LIKE 'B%' GROUP BY gender, source_of_salary
+
+-- HOW many individuals who have a bank account don't adhere to safe practices 
+SELECT COUNT(*) AS respondents, gender from respondent WHERE account_type LIKE 'B%' AND safe_practices IS NULL GROUP BY gender
+
+-- How many individuals have a PAN cards but not a bank account 
+SELECT COUNT(*) AS respondents, gender, name  FROM respondent WHERE documents LIKE '%PAN Card%' AND account_type IS NULL GROUP BY gender , name
+SELECT name, documents, account_type FROM respondent WHERE name IN ('Bheem Raj', 'Biru simgh')
+
+-- How many have a bank account and Know how to use ATM Card, Cheque Books And DD
+SELECT COUNT(gender) as ATM , gender FROM respondent WHERE account_type LIKE 'B%' AND financial_instrument LIKE 'A%' GROUP BY gender
+SELECT COUNT(gender) as Cheque, gender FROM respondent WHERE account_type LIKE '%B%' AND financial_instrument LIKE '%Cheque Books%' GROUP BY gender
+SELECT COUNT(gender) as Cheque, gender FROM respondent WHERE account_type LIKE '%B%' AND financial_instrument LIKE '%Demand Draft%' GROUP BY gender
+
+-- How many are paying loans and what loan are they paying 
+SELECT count(gender) as paying_loan, gender FROM respondent WHERE loan_obligation = 'Yes' GROUP BY gender
+SELECT count(gender) as paying_loan, gender, type_of_loan FROM respondent WHERE loan_obligation = 'Yes' GROUP BY gender,  type_of_loan
+SELECT count(gender) as not_paying_loan, gender FROM respondent WHERE loan_obligation = 'No' GROUP BY gender
+
+-- How many have a bank account yet they prefer taking informal loans 
+SELECT COUNT(gender) AS informal_loans,gender FROM respondent WHERE loan_preference = 'Informal Sources of Loan' AND account_type LIKE 'B%' GROUP BY gender
+
+-- How many respondents have a bank account and pay taxes 
+SELECT COUNT(gender) AS tax_payer, gender FROM respondent WHERE tax_obligation = 'Yes' AND account_type LIKE 'B%' GROUP BY gender
+
+-- How many respondents send money to their family and what are their method of remmittance 
+SELECT COUNT(*) as remmitter, gender , method_of_remmitance FROM respondent WHERE remmitance_to_family = 'Yes' GROUP BY gender , method_of_remmitance
+
+-- How many people invest and on what basis do they invest and what are their investment source 
+SELECT COUNT(*) AS investors, investment_decison , investment_information FROM respondent WHERE "Investing" = 'Yes' GROUP BY investment_decison , investment_information
+
+-- Respondents who have a positive opinion about insurance but find it difficult to get access to insurance 
+SELECT COUNT(*) AS individuals, gender FROM respondent WHERE insurance_opinion = 'Positive' AND access_to_insurance = 'Yes' GROUP BY gender
+
+-- Respondents who have a positive opinion what type of insurance do the have 
+SELECT COUNT(*) AS insurers,insurance_type FROM respondent WHERE insurance_opinion = 'Positive' AND insurance_type IS NOT NULL GROUP BY insurance_type
+-- Respondents who have a NEGATIVE opinion what type of insurance do the have
+SELECT name,insurance_type,sector FROM respondent WHERE insurance_opinion = 'Negative' AND insurance_type IS NOT NULL GROUP BY name, insurance_type,sector
+
+-- Individuals who find it easy to get access to insurance however find it difficult to claim insurance 
+SELECT COUNT(*) AS individuals, gender FROM respondent WHERE access_to_insurance = 'No' AND insurance_claim_difficulty = 'Yes' GROUP BY gender
+
+-- Individuals who find it difficult to get access to insurance however find it difficult to claim insurance 
+SELECT COUNT(*) AS individuals, gender FROM respondent WHERE access_to_insurance = 'Yes' AND insurance_claim_difficulty = 'Yes' GROUP BY gender
+
+-- Individuals who have a insurance and find it difficult to claim insurance 
+SELECT COUNT(*) AS insurers , gender FROM respondent WHERE insurance_type IS NOT NULL AND insurance_claim_difficulty = 'Yes' GROUP BY gender
+
+-- Individuals who have a negative opinion about insurance and find it difficulty to claim insurance
+SELECT COUNT(*) as respondent, gender,insurance_type FROM respondent WHERE insurance_opinion = 'Negative' AND insurance_claim_difficulty = 'Yes' and insurance_type IS NOT NULL GROUP BY gender,insurance_type
+
